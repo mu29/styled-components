@@ -16,39 +16,34 @@ export default class GlobalStyle {
     this.componentId = componentId;
     this.isStatic = isStaticRules(rules);
 
-    // pre-register the first instance to ensure global styles
     // load before component ones
-    StyleSheet.registerId(this.componentId + 1);
+    StyleSheet.registerId(this.componentId);
   }
 
   createStyles(
-    instance: number,
     executionContext: Object,
     styleSheet: StyleSheet,
     stylis: Stringifier
   ) {
     const flatCSS = flatten(this.rules, executionContext, styleSheet, stylis);
     const css = stylis(flatCSS.join(''), '');
-    const id = this.componentId + instance;
+    const id = this.componentId;
 
     // NOTE: We use the id as a name as well, since these rules never change
     styleSheet.insertRules(id, id, css);
   }
 
-  removeStyles(instance: number, styleSheet: StyleSheet) {
-    styleSheet.clearRules(this.componentId + instance);
+  removeStyles(styleSheet: StyleSheet) {
+    styleSheet.clearRules(this.componentId);
   }
 
   renderStyles(
-    instance: number,
     executionContext: Object,
     styleSheet: StyleSheet,
     stylis: Stringifier
   ) {
-    if (instance > 2) StyleSheet.registerId(this.componentId + instance);
-
     // NOTE: Remove old styles, then inject the new ones
-    this.removeStyles(instance, styleSheet);
-    this.createStyles(instance, executionContext, styleSheet, stylis);
+    this.removeStyles(styleSheet);
+    this.createStyles(executionContext, styleSheet, stylis);
   }
 }

@@ -17,7 +17,6 @@ import { SC_ATTR, SC_ATTR_VERSION } from '../constants';
 let styled;
 
 const resetSheet = sheet => {
-  sheet.gs = {};
   sheet.names = new Map();
   sheet.clearTag();
   rehydrateSheet(sheet);
@@ -306,9 +305,9 @@ describe('rehydration', () => {
       document.head.innerHTML = `
         <style ${SC_ATTR} ${SC_ATTR_VERSION}="${__VERSION__}">
           html { font-size: 16px; }/*!sc*/
-          ${SC_ATTR}.g1[id="sc-global-a1"]{content: "sc-global-a1,"}/*!sc*/
+          ${SC_ATTR}.g1[id="sc-global-a"]{content: "sc-global-a,"}/*!sc*/
           body { background: papayawhip; }/*!sc*/
-          ${SC_ATTR}.g2[id="sc-global-b1"]{content: "sc-global-b1,"}/*!sc*/
+          ${SC_ATTR}.g2[id="sc-global-b"]{content: "sc-global-b,"}/*!sc*/
           .c { color: blue; }/*!sc*/
           ${SC_ATTR}.g3[id="ONE"]{content: "c,"}/*!sc*/
           .d { color: red; }/*!sc*/

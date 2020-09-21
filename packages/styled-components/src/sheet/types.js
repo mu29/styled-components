@@ -25,7 +25,6 @@ export type SheetOptions = {
 };
 
 export interface Sheet {
-  allocateGSInstance(id: string): number;
   clearNames(id: string): void;
   clearRules(id: string): void;
   clearTag(): void;

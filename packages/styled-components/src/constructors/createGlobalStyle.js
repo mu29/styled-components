@@ -1,5 +1,5 @@
 // @flow
-import React, { useContext, useLayoutEffect, useRef } from 'react';
+import React, { useContext, useLayoutEffect } from 'react';
 import { STATIC_EXECUTION_CONTEXT } from '../constants';
 import GlobalStyle from '../models/GlobalStyle';
 import { useStyleSheet, useStylis } from '../models/StyleSheetManager';
@@ -30,9 +30,6 @@ export default function createGlobalStyle(
     const styleSheet = useStyleSheet();
     const stylis = useStylis();
     const theme = useContext(ThemeContext);
-    const instanceRef = useRef(styleSheet.allocateGSInstance(styledComponentId));
-
-    const instance = instanceRef.current;
 
     if (process.env.NODE_ENV !== 'production' && React.Children.count(props.children)) {
       // eslint-disable-next-line no-console
@@ -52,30 +49,30 @@ export default function createGlobalStyle(
     }
 
     if (__SERVER__) {
-      renderStyles(instance, props, styleSheet, theme, stylis);
+      renderStyles(props, styleSheet, theme, stylis);
     } else {
       // this conditional is fine because it is compiled away for the relevant builds during minification,
       // resulting in a single unguarded hook call
       // eslint-disable-next-line react-hooks/rules-of-hooks
       useLayoutEffect(() => {
-        renderStyles(instance, props, styleSheet, theme, stylis);
-        return () => globalStyle.removeStyles(instance, styleSheet);
-      }, [instance, props, styleSheet, theme, stylis]);
+        renderStyles(props, styleSheet, theme, stylis);
+        return () => globalStyle.removeStyles(styleSheet);
+      }, [props, styleSheet, theme, stylis]);
     }
 
     return null;
   }
 
-  function renderStyles(instance, props, styleSheet, theme, stylis) {
+  function renderStyles(props, styleSheet, theme, stylis) {
     if (globalStyle.isStatic) {
-      globalStyle.renderStyles(instance, STATIC_EXECUTION_CONTEXT, styleSheet, stylis);
+      globalStyle.renderStyles(STATIC_EXECUTION_CONTEXT, styleSheet, stylis);
     } else {
       const context = {
         ...props,
         theme: determineTheme(props, theme, GlobalStyleComponent.defaultProps),
       };
 
-      globalStyle.renderStyles(instance, context, styleSheet, stylis);
+      globalStyle.renderStyles(context, styleSheet, stylis);
     }
   }
 
